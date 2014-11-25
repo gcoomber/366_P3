@@ -1,0 +1,2 @@
+On run on 300:
+	Average return: -71321.8533333
