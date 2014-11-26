@@ -3,8 +3,8 @@ import numpy
 from Tilecoder_v2 import numTilings, tilecode, numTiles
 from pylab import *
 
-numRuns = 1
-numEpisodes = 300
+numRuns = 50
+numEpisodes = 200
 n = numTiles * 3
 
 alpha = 0.05/numTilings
@@ -12,6 +12,7 @@ gamma = 1
 lmbda = 0.9
 epsilon = 0
 
+returnsMatrix = zeros((numRuns,numEpisodes))
 
 # Calculate the state action value by adjusting the feature indices for the current action
 def getStateActionValue(weights, features, action):
@@ -50,14 +51,21 @@ def writeF():
     steps = 50
     for i in range(steps):
         for j in range(steps):
-            tilecode(-1.2+i*1.7/steps, -0.07+j*0.14/steps, F)
-            height = -max(Qs(F))
+            S = (-1.2+i*1.7/steps, -0.07+j*0.14/steps)
+            tilecode(S, F)
+            Qa = zeros(3)
+            for a_poss in [0,1,2]:
+                Qa[a_poss] = getStateActionValue(w,F,a_poss)
+            height = -max(Qa)
             fout.write(repr(height) + ' ')
         fout.write('\n')
     fout.close()
 
-def writeAverages(filename,averages):
-    savetxt(filename,averages)
+def writeAverages(filename,averagesMatrix):
+    returnsAverages = zeros(numEpisodes)
+    for i in range(numEpisodes):
+        returnsAverages[i] = average(returnsMatrix[:,i])
+    savetxt(filename,returnsAverages)
 
 runSum = 0.0
 for runNum in range(numRuns):
@@ -105,6 +113,10 @@ for runNum in range(numRuns):
             carState = carStateNew
         print("Episode: ", episodeNum, "Return: ", G)
         returnSum = returnSum + G
-    print("Average return:", returnSum/numEpisodes)
+        returnsMatrix[runNum,episodeNum] = G
+    print("Run: ", runNum, "Average return:", returnSum/numEpisodes)
     runSum += returnSum
 print("Overall average return:", runSum/numRuns/numEpisodes)
+
+writeF()
+writeAverages('averageReturn',returnsMatrix)
