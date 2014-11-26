@@ -68,6 +68,7 @@ def writeAverages(filename,averagesMatrix):
     savetxt(filename,returnsAverages)
 
 runSum = 0.0
+runSums = zeros(numRuns)
 for runNum in range(numRuns):
     returnSum = 0.0
     w = zeros(n)
@@ -116,7 +117,10 @@ for runNum in range(numRuns):
         returnsMatrix[runNum,episodeNum] = G
     print("Run: ", runNum, "Average return:", returnSum/numEpisodes)
     runSum += returnSum
+    runSums[runNum] = returnSum
 print("Overall average return:", runSum/numRuns/numEpisodes)
-
+print("Run sum data for all runs: ", runSums)
+print("Average Run sum: ", numpy.average(runSums))
+print("std deviation: ", numpy.std(runSums))
 writeF()
 writeAverages('averageReturn',returnsMatrix)
