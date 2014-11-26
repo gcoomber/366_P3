@@ -1,6 +1,6 @@
 import mountaincar
 import numpy
-from Tilecoder_v2 import numTilings, tilecode, numTiles
+from Tilecoder import numTilings, tilecode, numTiles
 from pylab import *
 
 numRuns = 50
