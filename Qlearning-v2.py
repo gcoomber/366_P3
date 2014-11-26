@@ -83,13 +83,11 @@ for runNum in range(numRuns):
             delta = R - Qa[A]
 
             for i in Fa: # for each active feature index
-                for a_poss in [0,1,2]: # for each possible action from carStateNew
-                    e[i+numTiles*a_poss] = 1
+                e[i+numTiles*A] = 1
 
             # if the new state is the terminal state, update the weight vector and break
             if carStateNew==None:
-                # w = w + alpha*delta * e
-                w = numpy.add(w, numpy.multiply(alpha*delta, e))
+                w = w + alpha*delta * e
                 break
 
             # update values for the weight vector and the eligibility traces
@@ -99,10 +97,9 @@ for runNum in range(numRuns):
                 tilecode(carStateNew,Fa)
                 Qa[a_poss] = getStateActionValue(w,Fa,a_poss)           
             delta = delta + gamma*max(Qa)
-            # w = w + alpha*delta * e
-            w = numpy.add(w, numpy.multiply(alpha*delta, e))
-            # e = gamma*lmbda*e
-            e = numpy.multiply(gamma*lmbda, e)
+            
+            w = w + alpha*delta * e
+            e = gamma*lmbda*e
 
             # move to the new state
             carState = carStateNew
